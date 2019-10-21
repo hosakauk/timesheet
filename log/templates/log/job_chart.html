@@ -1,0 +1,201 @@
+{% extends 'log/navbar.html' %}
+{% load logtags %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static "Chart.min.js" %}"></script>
+    <script>
+        var randomColorGenerator = function () {
+            return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
+        };
+        var options = {
+            responsive: true,
+            maintainAspectRatio: true,
+            legend: {
+                display: false,
+                position: 'left'
+            },
+
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                        }
+                    }]
+                },
+            animation: {
+                animateScale: true,
+                animateRotate: true
+            }
+        };
+        window.onload = function () {
+            var ctx = document.getElementById("jobs-per-user");
+            {% regroup filter.qs|dictsort:"worker.username" by worker.username as worklist %}
+            var lineChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for i in worklist %}'{{ i.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for i in worklist %}'{{ i.list|length }}',{% endfor %}],
+                        backgroundColor: [{% for i in worklist %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    display: false,
+                    position: 'left'
+                        },
+                title: {
+                    display: true,
+                    text: "Jobs Per User"
+                    },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                                }
+                            }]
+                        },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                            }
+                        }
+            });
+
+            var ctx = document.getElementById("cost-per-project");
+            {% regroup filter.qs|dictsort:"cost"|dictsort:"project.projectname" by project.projectname as projtimee %}
+            var lineChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for i in projtimee %}'{{ i.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for i in projtimee %}'{{ i.list|running_total }}',{% endfor %}],
+                        backgroundColor: [{% for i in projtimee %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    display: false,
+                    position: 'left'
+                        },
+                title: {
+                    display: true,
+                    text: "Cost Per Project"
+                    },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                                }
+                            }]
+                        },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                            }
+                        }
+            });
+
+            var ctx = document.getElementById("jobs-per-project");
+            {% regroup filter.qs|dictsort:"project.projectname" by project.projectname as joblist %}
+            var lineChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for i in joblist %}'{{ i.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for i in joblist %}'{{ i.list|length }}',{% endfor %}],
+                        backgroundColor: [{% for i in joblist %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    display: true,
+                    position: 'left'
+                        },
+                title: {
+                    display: true,
+                    text: "Jobs Per Project"
+                    },
+
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                            }
+                        }
+        },);
+
+            var ctx = document.getElementById("cost-per-job");
+            var lineChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for i in filter.qs %}'{{ i.loggedjob }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for i in filter.qs %}'{{ i.cost|slugify }}',{% endfor %}],
+                        backgroundColor: [{% for i in filter.qs %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    legend: {
+                        display: true,
+                        position: 'left'
+                    },
+                    title: {
+                        display: true,
+                        text: "Cost Per Job"
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+                });
+    }
+</script>
+
+<title>
+{% block title %}Time Sheet{% endblock %}
+</title>
+
+<form class="form-inline" method="get">
+    <div class="form-group row">{{ filter.form|crispy }}</div>
+        <div class="col">
+        <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+</form>
+<a href="{% url 'search' %}">Home</a>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Total Cost: £{{ filter.totalcost }}</th>
+        <th>Total Time: {{ filter.totaltimespent }}</th>
+    </tr>
+    </thead>
+    <tr>
+        <td>
+            <canvas id="jobs-per-project"></canvas>
+        </td>
+        <td>
+            <canvas id="cost-per-project"></canvas>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <canvas id="jobs-per-user"></canvas>
+        </td>
+        <td>
+            <canvas id="cost-per-job"></canvas>
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

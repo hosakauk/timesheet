@@ -1,0 +1,14 @@
+{% extends 'log/navbar.html' %}
+{% block content %}
+<div class="form-confirm">
+<form class="form-group"  method="post">
+    <h2>Delete Job ?</h2>
+    {% csrf_token %}
+    Are you sure you want to delete this job?
+    <div class="col">
+    <input class="btn btn-primary" type="submit" value="Submit" />
+    </div>
+</form>
+</div>
+
+{% endblock %}

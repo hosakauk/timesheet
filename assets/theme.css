@@ -1,0 +1,85 @@
+body {
+    background-color: #f4f4f4;
+    font-size: 15px;
+    text-align: center;
+    width: 100%;
+}
+
+.form-signin {
+    text-align: center;
+    padding-top: 10%;
+}
+
+.form-signin .form-group {
+    text-align: center;
+}
+
+.form-signin .form-group .row {
+    text-align: center;
+    justify-content: center;
+}
+
+.form-confirm {
+    text-align: center;
+}
+
+.form-confirm .form-group {
+    text-align: center;
+}
+
+.form-confirm .form-group .row {
+    text-align: center;
+    justify-content: center;
+}
+
+.form-confirm .form-group .col {
+    padding-top: 15px;
+}
+
+
+.h2 {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.container {
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+}   
+
+.table {
+    padding-left: 15px;
+    padding-right: 15px;
+    text-align: center;
+}
+
+.form-inline {
+    text-align: center;
+    padding-bottom: 5%;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.form-group .row {
+    padding-bottom: 15px;
+    text-align: center;
+}
+
+.form-inline .col {
+    padding-top: 15px;
+    text-align: left;
+}
+
+.form-control {
+    text-align: left;
+}
+
+.control-group {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+

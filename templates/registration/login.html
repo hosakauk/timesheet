@@ -1,0 +1,22 @@
+{% extends 'log/base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{{ bootstrap_css }}
+{% block bootstrap4_content %}
+{% load crispy_forms_tags %}
+
+<div class="container">
+<div class="form-signin">
+    <form class="form-group" method="post">
+        <div class="h1">🕓</div>
+        <div class="h2">Login</div>
+        {% csrf_token %}
+        <div class="form-group">{{ form|crispy }}</div>
+        <div class="col">
+            <button class="btn btn-primary" type="submit">Login</button>
+        </div>
+    </form>
+</div>
+</div>
+
+{% endblock %}

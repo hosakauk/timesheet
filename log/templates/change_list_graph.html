@@ -1,0 +1,157 @@
+{% extends "admin/change_list.html" %}
+{% load staticfiles %}
+{% block extrahead %}
+{% load logtags %}
+{% load static %}
+
+<script type="text/javascript" src="{% static "Chart.min.js" %}"></script>
+    <script>
+        var randomColorGenerator = function () {
+            return '#' + (Math.random().toString(16) + '0000000').slice(2, 8);
+        };
+        var options = {
+            responsive: true,
+            maintainAspectRatio: true,
+            legend: {
+                display: false,
+                position: 'left'
+            },
+ 
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                        }
+                    }]
+                },
+            animation: {
+                animateScale: true,
+                animateRotate: true
+            }
+        };
+        window.onload = function () {
+            var ctx = document.getElementById("work-chart");
+            {% regroup cl.queryset|dictsort:"loggedjob" by worker as worklist %}
+            {% regroup cl.queryset|dictsort:"loggedjob" by get_worker_display as perwork %}
+            var lineChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for i in worklist %}'{{ i.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for i in worklist %}'{{ i.list|length }}',{% endfor %}],
+                        backgroundColor: [{% for i in cl.queryset %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    display: false,
+                    position: 'left'
+                        },
+                title: {
+                    display: true,
+                    text: "Jobs Per User"
+                    },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                                }
+                            }]
+                        },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                            }
+                        }
+            });
+            
+           var ctx = document.getElementById("proj-chart");
+            {% regroup cl.queryset|dictsort:"cost"|dictsort:"project.projectname" by project.projectname as projtimee %}
+            var lineChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for i in projtimee %}'{{ i.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for i in projtimee %}'{{ i.list|running_total }}',{% endfor %}],
+                        backgroundColor: [{% for i in projtimee %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    display: false,
+                    position: 'left'
+                        },
+                title: {
+                    display: true,
+                    text: "Cost Per Project"
+                    },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                                }
+                            }]
+                        },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                            }
+                        }
+            });
+            
+            var ctx = document.getElementById("job-chart");
+            {% regroup cl.queryset|dictsort:"project.projectname" by project.projectname as joblist %}
+            var lineChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [{% for i in joblist %}'{{ i.grouper }}',{% endfor %}],
+                    datasets: [{
+                        data: [{% for i in joblist %}'{{ i.list|length }}',{% endfor %}],
+                        backgroundColor: [{% for i in cl.queryset %}randomColorGenerator(),{% endfor %}]
+                    }]
+                },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                legend: {
+                    display: true,
+                    position: 'left'
+                        },
+                title: {
+                    display: true,
+                    text: "Jobs Per Project"
+                    },
+
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                            }
+                        }
+        });
+
+}
+    </script>
+{% endblock %}
+{% block content %}
+
+<table class="table table-striped">
+    <tr>
+        <td>
+            <canvas id="job-chart"></canvas>
+        </td>
+        <td>
+            <canvas id="work-chart"></canvas>
+        </td>
+        <td>
+            <canvas id="proj-chart"></canvas>
+        </td>
+    </tr>
+</table>
+
+    {{ block.super }}
+{% endblock %}

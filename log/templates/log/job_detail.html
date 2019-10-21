@@ -1,0 +1,29 @@
+{% extends 'log/navbar.html' %}
+{% block content %}
+<table class="table table-striped">
+    <td>
+        Job Details
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td>
+        Job: {{object.loggedjob}}
+    </td>
+    <td>
+        Start Time: {{object.starttime}}
+    </td>
+    <td>
+        Finish Time: {{object.finishtime}}
+    </td>
+    <td>
+        Project: {{object.project}}
+    </td>
+    <td>
+        Worker: {{object.worker}}
+    </td>
+    <td>
+        Description: {{object.description}}
+    </td>
+</table>
+{% endblock %}

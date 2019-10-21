@@ -1,0 +1,63 @@
+{% extends 'log/navbar.html' %}
+{% load logtags %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<title>
+{% block title %}Time Sheet{% endblock %}
+</title>
+
+<form class="form-inline" method="get">
+    <div class="form-group row">{{ filter.form|crispy }}</div>
+        <div class="col">
+        <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+</form>
+
+<div class="panel panel-default">
+    <div class="row">
+        <div class="col">Time Now: {% now "SHORT_DATETIME_FORMAT" %} </div>
+        <div class="col">Welcome: {{ user.username }} </div>
+        <div class="col">Time Spent Total: {{ filter.totaltimespent }}</div>
+        <div class="col">Total Cost: £{{ filter.totalcost }}</div>
+        <div class="col"><a href="{% url "job_create" %}">Add Job</a></div>
+        <div class="col"><a href="{% url "job_chart" %}">Charts</a></div>
+    </div>
+</div>
+    
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Job Name</th>
+        <th>Start Time</th>
+        <th>Finish Time</th>
+        <th>Description</th>
+        <th>Worker</th>
+        <th>Project</th>
+        <th>Time Spent</th>
+        <th>Job Cost</th>
+        <th>Cost Per Hour</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+    </tr>
+    </thead>
+
+{% for job in filter.qs %}
+    <tr>
+        <td>{{ job.loggedjob }}</td>
+        <td>{{ job.starttime|date:"H:i Y-m-d" }}</td>
+        <td>{{ job.finishtime|date:"H:i Y-m-d" }}</td>
+        <td>{{ job.description }}</td>
+        <td>{{ job.worker }}</td>
+        <td>{{ job.project }}</td>
+        <td>{{ job.jobtime }}</td>
+        <td>£{{ job.cost }}</td>
+        <td>£{{ job.project.costperhour }}</td>
+        <td><a  href="{% url "job_detail"  job.id  %}">details</a></td>
+        <td><a  href="{% url "job_update"  job.id  %}">edit</a></td>
+        <td><a  href="{% url "job_delete"  job.id  %}">delete</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
